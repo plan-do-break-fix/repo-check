@@ -104,6 +104,7 @@ celerybeat.pid
 # Environments
 .env
 .venv
+.secret.env
 env/
 venv/
 ENV/
@@ -127,3 +128,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# vim
+.sw[op]
+
+# vscode
+*.code-workspace
+
+# RabbitMQ defs - contains pwd hashes
+definitions.json
