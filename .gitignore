@@ -137,3 +137,5 @@ dmypy.json
 
 # RabbitMQ defs - contains pwd hashes
 definitions.json
+
+app/Interfaces/BustedRepoSources

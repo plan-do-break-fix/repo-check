@@ -1,0 +1,119 @@
+---
+version: "3.3"
+
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+    networks:
+      mndatus-net:
+        ipv4_address: 172.42.0.2
+    volumes:
+      - /var/lib/mysql:/var/lib/mysql
+
+  mongo:
+    image: mongo:4.4-bionic
+    container_name: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    networks:
+      mndatus-net:
+        ipv4_address: 172.42.0.3
+    volumes:
+      - /media/mongo/data/db:/data/db
+      - /media/mongo/data/configbd:/data/configdb
+      - /media/mongo/backups:/backups
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: always
+    depends_on: 
+      - mongo
+    environment:
+      ME_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+    ports:
+      - 8081:8081
+    networks:
+      mndatus-net:
+        ipv4_address: 172.42.0.33
+
+  rabbitmq:
+    image: mndatus-rabbitmq:1.0
+    container_name: rabbitmq
+    restart: always
+    ports:
+     - 15672:15672
+    networks:
+      mndatus-net:
+        ipv4_address: 172.42.0.4
+
+  orchestrator:
+    image: mndatus-orchestrator:1.0
+    restart: always
+    depends_on: 
+      - rabbitmq
+      - mysql
+    environment: 
+      RMQ_HOST: 172.42.0.4
+      RMQ_USER: $RMQ_USER
+      RMQ_PASSWORD: $RMQ_PASSWORD
+      MYSQL_HOST: 172.42.0.2
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      ORCHESTRATOR_CYCLE_INTERVAL: $ORCHESTRATOR_CYCLE_INTERVAL
+      REPO_WATCH_INTERVAL: $REPO_WATCH_INTERVAL
+      FULL_QUEUE_SIZE: $FULL_QUEUE_SIZE
+    networks:
+      - mndatus-net
+
+  inspector:
+    image: mndatus-inspector:1.0
+    restart: always
+    depends_on: 
+      - mongo
+      - mysql
+      - rabbitmq
+    environment:
+      RMQ_HOST: 172.42.0.4
+      RMQ_USER: $RMQ_USER
+      RMQ_PASSWORD: $RMQ_PASSWORD
+      MONGO_HOST: 172.42.0.3
+      MYSQL_HOST: 172.42.0.2
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      INSPECTOR_IDLE_INTERVAL: $INSPECTOR_IDLE_INTERVAL
+    networks: 
+      - mndatus-net
+    volumes:
+      - /home/user/nltk_data:/home/appuser/nltk_data
+
+  finder:
+    image: mndatus-finder:1.0
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      TRENDING_REPO_CHECK_INTERVAL: $TRENDING_REPO_CHECK_INTERVAL
+      FINDER_CYCLE_INTERVAL: $FINDER_CYCLE_INTERVAL
+      MYSQL_HOST: 172.42.0.2
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+    networks: 
+      - mndatus-net
+    volumes:
+      - /var/lib/sqlite:/data
+
+
+networks:
+  mndatus-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.42.0.0/16
