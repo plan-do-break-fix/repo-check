@@ -6,8 +6,8 @@ class Interface:
 
     def __init__(self, host):
         self.client = MongoClient(host, 27017)
-        self.db = self.client.report_database
-        self.collection = self.db.report
+        self.db = self.client.report
+        self.collection = self.db.inspection
 
     def write_report(self, report):
         self.collection.insert_one(report).inserted_id
