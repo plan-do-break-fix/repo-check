@@ -1,5 +1,5 @@
 #~/bin/python3
-# MNDatus Orchestrator v1.0
+# Queueing v1.0
 from datetime import datetime
 from hashlib import md5
 import json
@@ -20,8 +20,8 @@ class App(AbstractApp):
 
     def __init__(self):
         super().__init__()
-        self.log = self.get_logger("Orchestrator")
-        self.log.debug("Starting MNDatus Orchestrator...")
+        self.log = self.get_logger("Queueing")
+        self.log.debug("Starting Queueing...")
         self.mq = RabbitMq(environ["RMQ_HOST"],
                            environ["RMQ_USER"],
                            environ["RMQ_PASSWORD"])
@@ -30,11 +30,11 @@ class App(AbstractApp):
                          environ["MYSQL_USER"],
                          environ["MYSQL_PASSWORD"])
         self.log.debug("MySQL server connection established.")
-        self.cycle_interval = int(environ["ORCHESTRATOR_CYCLE_INTERVAL"])
+        self.cycle_interval = int(environ["QUEUING_CYCLE_INTERVAL"])
         #self.repo_watch_interval = int(environ["REPO_WATCH_INTERVAL"])
         self.doc_exts = ["html", "md"]
         self.full_queue_size = int(environ["FULL_QUEUE_SIZE"])
-        self.log.debug("MNDatus Orchestrator initialized.")
+        self.log.debug("Repo Check Queueing initialized.")
 
     def run_loop(self):
         while True:
@@ -59,7 +59,7 @@ class App(AbstractApp):
         if self.mq.message_count("inspection") < 10:
             self.log.debug(f"Inspection queue running low after filling.")
         
-    def find_watched_repo_jobs(self) -> int:
+    def make_watched_repo_jobs(self) -> int:
         jobs_added = 0
         cutoff_time = int(datetime.now().timestamp() - self.repo_watch_interval)
         repo_visits: List[Tuple] = self.sql.get_watched_repo_visit_times(cutoff=cutoff_time)
@@ -91,8 +91,8 @@ class App(AbstractApp):
 
     def submit_job(self, job) -> bool:
         """
-        Submits job to inspection queue and marks the repo as checked out to
-        prevent accidental duplication of jobs in the inspection queue.
+        Submits job to inspection queue and marks the repo as checked out.
+        Check out prevents duplication of jobs in the inspection queue.
         """
         job["created"] = int(datetime.now().timestamp())
         self.mq.enqueue(json.dumps(job), "inspection")

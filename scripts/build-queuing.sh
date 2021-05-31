@@ -1,7 +1,7 @@
 #!/bin/bash
 PROJECT=/home/user/mndatus
 
-cd $PROJECT/app/Orchestrator
+cd $PROJECT/app/Queueing
 #cp $PROJECT/.dockerignore .
 cp $PROJECT/app/Abstract/AbstractApp.py .
 cp $PROJECT/app/Interfaces/Github.py .

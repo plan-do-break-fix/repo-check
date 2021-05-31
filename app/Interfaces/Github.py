@@ -1,6 +1,5 @@
 #!/bin/python3
 import logging
-from os import environ
 import requests
 from time import sleep
 from typing import List
@@ -127,5 +126,5 @@ def remove_login_redirect(href: str) -> str:
     return href.replace("/login?return_to=", "").replace("%2F", "/")
 
 def is_not_sponsored(href: str) -> bool:
-    return False if href.startswith("https://github.com/sponsors/") else True
+    return False if href.startswith("/sponsors/") else True
 

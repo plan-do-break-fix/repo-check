@@ -1,5 +1,5 @@
 #~/bin/python3
-# MNDatus RepoFinder v1.0
+# Repo Check - Finder v1.0
 from datetime import datetime
 from os import environ
 from random import randint
@@ -15,7 +15,7 @@ class App(AbstractApp):
     def __init__(self):
         super().__init__()
         self.log = self.get_logger("Finder")
-        self.log.debug("Starting MNDatus RepoFinder...")
+        self.log.debug("Starting Repo Check RepoFinder...")
         self.db = FinderDb()
         self.log.debug("Embedded database connection established.")
         self.sql = MySql(environ["MYSQL_HOST"],
@@ -28,7 +28,7 @@ class App(AbstractApp):
         self.log.debug("Repository source interfaces loaded.")
         self.cycle_interval = int(environ["FINDER_CYCLE_INTERVAL"])
         self.check_interval = int(environ["TRENDING_REPO_CHECK_INTERVAL"])
-        self.log.debug("MNDatus RepoFinder initialized.")
+        self.log.debug("Finder initialized.")
 
     def run_loop(self):
         while True:

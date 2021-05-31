@@ -1,5 +1,5 @@
 #!/bin/python3
-# MNDatus Inspector v1.0
+# Repo Check - Inspector v1.0
 VER = "1.0"  # Inspector version logged in report metadata
 from datetime import datetime
 import json
@@ -23,7 +23,7 @@ class App(AbstractApp):
     def __init__(self):
         super().__init__()
         self.log = self.get_logger("Inspector")
-        self.log.debug("Starting MNDatus Inspector...")
+        self.log.debug("Starting Repo Check Inspector...")
         self.pedant = Pedant()
         self.mq = RabbitMq(environ["RMQ_HOST"],
                            environ["RMQ_USER"],
@@ -36,14 +36,14 @@ class App(AbstractApp):
         self.mongo = Mongo(environ["MONGO_HOST"])
         self.log.debug("MongoDB server connection established.")
         self.idle_interval = int(environ["INSPECTOR_IDLE_INTERVAL"])
-        self.doc_exts = [
+        self.doc_exts = [   # file exts that are inspected
             "html",
             "md"
         ]
-        self.third_party_paths = [
+        self.third_party_paths = [  # ignored
             "/vendor/"
         ]
-        self.log.debug("Starting MNDatus Inspector...")
+        self.log.debug("Starting Inspector...")
 
     def run_loop(self):
         while True:
@@ -95,6 +95,7 @@ class App(AbstractApp):
         return False if not job else json.loads(job)
 
     def make_local_repo(self, repo_url) -> bool:
+        """Downloads repo zip file to /tmp and expands."""
         repo_name = Github.repo_url_to_name(repo_url)
         LocalRepo.clean_up()
         if not Github.download_repo(repo_url):
@@ -105,6 +106,7 @@ class App(AbstractApp):
         return True
 
     def make_inspection_list(self, job: dict) -> List[str]:
+        """Return list of files to inspect."""
         if not job["file_list"]:
             file_list = LocalRepo.filter_by_type(
                             LocalRepo.all_files(), self.doc_exts)
@@ -123,13 +125,6 @@ class App(AbstractApp):
                         "typos": self.pedant.check(LocalRepo.text(_doc))
                     } for _doc in file_list}
         return findings
-
-    #def findings_integrity_check(self, findings, file_list) -> bool:
-    #    if not len(file_list) == len(findings["typos"].keys()) == len(findings["links"].keys()):
-    #        self.log.error(f"Inspection error: {len(typos)} typo results and "
-    #                       f"{len(links)} link results for {len(file_list)} files.")
-    #        raise RuntimeError
-
 
 
 if __name__ == "__main__":
