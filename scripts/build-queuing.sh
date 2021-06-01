@@ -1,5 +1,5 @@
 #!/bin/bash
-PROJECT=/home/user/repocheck
+PROJECT=/home/user/repo-check
 
 cd $PROJECT/app/Queueing
 #cp $PROJECT/.dockerignore .
@@ -9,7 +9,7 @@ cp $PROJECT/app/Interfaces/GithubApi.py .
 cp $PROJECT/app/Interfaces/LocalRepo.py .
 cp $PROJECT/app/Interfaces/MySql.py .
 cp $PROJECT/app/Interfaces/RabbitMq.py .
-docker build . --tag 'repocheck-orchestrator:1.0'
+docker build . --tag 'repo-check-orchestrator:1.0'
 rm .dockerignore
 rm AbstractApp.py
 rm Github.py

@@ -1,5 +1,5 @@
 #!/bin/bash
-PROJECT=/home/user/repocheck
+PROJECT=/home/user/repo-check
 
 # Repo Finder
 cd $PROJECT/app/Finder
