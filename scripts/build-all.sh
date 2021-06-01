@@ -1,5 +1,5 @@
 #!/bin/bash
-PROJECT=/home/user/mndatus
+PROJECT=/home/user/repocheck
 
 # Repo Finder
 cd $PROJECT/app/Finder
@@ -9,7 +9,7 @@ cp $PROJECT/app/Interfaces/Github.py .
 cp $PROJECT/app/Interfaces/GithubApi.py .
 cp $PROJECT/app/Interfaces/MySql.py .
 cp $PROJECT/app/Interfaces/Sqlite.py .
-docker build . --tag 'mndatus-finder:1.0'
+docker build . --tag 'repocheck-finder:1.0'
 rm .dockerignore
 rm AbstractApp.py
 rm Github.py
@@ -27,7 +27,7 @@ cp $PROJECT/app/Interfaces/LocalRepo.py .
 cp $PROJECT/app/Interfaces/Mongo.py .
 cp $PROJECT/app/Interfaces/MySql.py .
 cp $PROJECT/app/Interfaces/RabbitMq.py .
-docker build . --tag 'mndatus-inspector:1.0'
+docker build . --tag 'repocheck-inspector:1.0'
 rm .dockerignore
 rm AbstractApp.py
 rm Github.py
@@ -45,7 +45,7 @@ cp $PROJECT/app/Interfaces/GithubApi.py .
 cp $PROJECT/app/Interfaces/LocalRepo.py .
 cp $PROJECT/app/Interfaces/MySql.py .
 cp $PROJECT/app/Interfaces/RabbitMq.py .
-docker build . --tag 'mndatus-orchestrator:1.0'
+docker build . --tag 'repocheck-orchestrator:1.0'
 rm .dockerignore
 rm AbstractApp.py
 rm Github.py
@@ -56,8 +56,8 @@ rm RabbitMq.py
 
 # Message Queue
 cd $PROJECT/app/MessageQueue
-docker build . --tag 'mndatus-rabbitmq:1.0'
+docker build . --tag 'repocheck-rabbitmq:1.0'
 
-cd /home/user/mndatus
+cd /home/user/repocheck
 docker pull mysql:5.7
 docker pull mongo:4.4-bionic

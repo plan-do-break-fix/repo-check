@@ -1,5 +1,5 @@
 #!/bin/bash
-PROJECT=/home/user/mndatus
+PROJECT=/home/user/repocheck
 
 cd $PROJECT/app/Queueing
 #cp $PROJECT/.dockerignore .
@@ -9,7 +9,7 @@ cp $PROJECT/app/Interfaces/GithubApi.py .
 cp $PROJECT/app/Interfaces/LocalRepo.py .
 cp $PROJECT/app/Interfaces/MySql.py .
 cp $PROJECT/app/Interfaces/RabbitMq.py .
-docker build . --tag 'mndatus-orchestrator:1.0'
+docker build . --tag 'repocheck-orchestrator:1.0'
 rm .dockerignore
 rm AbstractApp.py
 rm Github.py

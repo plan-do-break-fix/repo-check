@@ -9,7 +9,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: pass
     networks:
-      mndatus-net:
+      repocheck-net:
         ipv4_address: 172.42.0.2
     volumes:
       - /var/lib/mysql:/var/lib/mysql
@@ -21,7 +21,7 @@ services:
     ports:
       - 27017:27017
     networks:
-      mndatus-net:
+      repocheck-net:
         ipv4_address: 172.42.0.3
     volumes:
       - /media/mongo/data/db:/data/db
@@ -41,21 +41,21 @@ services:
     ports:
       - 8081:8081
     networks:
-      mndatus-net:
+      repocheck-net:
         ipv4_address: 172.42.0.33
 
   rabbitmq:
-    image: mndatus-rabbitmq:1.0
+    image: repocheck-rabbitmq:1.0
     container_name: rabbitmq
     restart: always
     ports:
      - 15672:15672
     networks:
-      mndatus-net:
+      repocheck-net:
         ipv4_address: 172.42.0.4
 
   orchestrator:
-    image: mndatus-orchestrator:1.0
+    image: repocheck-orchestrator:1.0
     restart: always
     depends_on: 
       - rabbitmq
@@ -71,10 +71,10 @@ services:
       REPO_WATCH_INTERVAL: $REPO_WATCH_INTERVAL
       FULL_QUEUE_SIZE: $FULL_QUEUE_SIZE
     networks:
-      - mndatus-net
+      - repocheck-net
 
   inspector:
-    image: mndatus-inspector:1.0
+    image: repocheck-inspector:1.0
     restart: always
     depends_on: 
       - mongo
@@ -90,12 +90,12 @@ services:
       MYSQL_PASSWORD: $MYSQL_PASSWORD
       INSPECTOR_IDLE_INTERVAL: $INSPECTOR_IDLE_INTERVAL
     networks: 
-      - mndatus-net
+      - repocheck-net
     volumes:
       - /home/user/nltk_data:/home/appuser/nltk_data
 
   finder:
-    image: mndatus-finder:1.0
+    image: repocheck-finder:1.0
     restart: always
     depends_on:
       - mysql
@@ -106,13 +106,13 @@ services:
       MYSQL_USER: $MYSQL_USER
       MYSQL_PASSWORD: $MYSQL_PASSWORD
     networks: 
-      - mndatus-net
+      - repocheck-net
     volumes:
       - /var/lib/sqlite:/data
 
 
 networks:
-  mndatus-net:
+  repocheck-net:
     driver: bridge
     ipam:
       config:
